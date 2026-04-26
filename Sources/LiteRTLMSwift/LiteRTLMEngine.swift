@@ -57,12 +57,23 @@ public final class LiteRTLMEngine: @unchecked Sendable {
     // MARK: - Init
 
     /// Create an engine instance.
+    /// Maximum number of tokens the engine will hold in its context (input +
+    /// output combined). Set at engine-create time via
+    /// `litert_lm_engine_settings_set_max_num_tokens`. Defaults to 16384 —
+    /// raised from upstream's 4096 because Gemma 4 E2B's compiled
+    /// `.litertlm` supports up to 32K, and the smaller cap clipped grounded
+    /// system prompts in production. Pick a value that fits your device's
+    /// RAM budget (KV cache scales linearly).
+    public let maxNumTokens: Int32
+
     /// - Parameters:
     ///   - modelPath: Path to the `.litertlm` model file on disk.
     ///   - backend: Compute backend — `"cpu"` or `"gpu"` (GPU uses Metal on iOS).
-    public init(modelPath: URL, backend: String = "cpu") {
+    ///   - maxNumTokens: Engine context cap (input + output). See `maxNumTokens`.
+    public init(modelPath: URL, backend: String = "cpu", maxNumTokens: Int32 = 16384) {
         self.modelPath = modelPath
         self.backend = backend
+        self.maxNumTokens = maxNumTokens
     }
 
     deinit {
@@ -119,7 +130,7 @@ public final class LiteRTLMEngine: @unchecked Sendable {
                             throw LiteRTLMError.engineCreationFailed("Failed to create engine settings")
                         }
 
-                        litert_lm_engine_settings_set_max_num_tokens(settings, 4096)
+                        litert_lm_engine_settings_set_max_num_tokens(settings, self.maxNumTokens)
 
                         let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
                             .appendingPathComponent("litertlm_cache").path
