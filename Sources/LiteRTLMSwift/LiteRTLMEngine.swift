@@ -548,7 +548,7 @@ public final class LiteRTLMEngine: @unchecked Sendable {
                     }
                     litert_lm_session_config_set_max_output_tokens(sessionConfig, Int32(maxTokens))
                     var samplerParams = LiteRtLmSamplerParams(
-                        type: kTopP, top_k: 40, top_p: 0.95,
+                        type: kTopP, top_k: 64, top_p: 0.95,
                         temperature: temperature, seed: 0
                     )
                     litert_lm_session_config_set_sampler_params(sessionConfig, &samplerParams)
@@ -896,7 +896,7 @@ public final class LiteRTLMEngine: @unchecked Sendable {
 
         litert_lm_session_config_set_max_output_tokens(sessionConfig, maxTokens)
         var samplerParams = LiteRtLmSamplerParams(
-            type: kTopP, top_k: 40, top_p: 0.95,
+            type: kTopP, top_k: 64, top_p: 0.95,
             temperature: temperature, seed: 0
         )
         litert_lm_session_config_set_sampler_params(sessionConfig, &samplerParams)
@@ -967,7 +967,7 @@ public final class LiteRTLMEngine: @unchecked Sendable {
                     }
                     litert_lm_session_config_set_max_output_tokens(sessionConfig, Int32(maxTokens))
                     var samplerParams = LiteRtLmSamplerParams(
-                        type: kTopP, top_k: 40, top_p: 0.95,
+                        type: kTopP, top_k: 64, top_p: 0.95,
                         temperature: temperature, seed: 0
                     )
                     litert_lm_session_config_set_sampler_params(sessionConfig, &samplerParams)
