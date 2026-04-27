@@ -76,6 +76,13 @@ public final class LiteRTLMEngine: @unchecked Sendable {
         self.maxNumTokens = maxNumTokens
     }
 
+    /// iOS LiteRT-LM Metal accelerator currently supports the **text**
+    /// channel only — passing `"gpu"` for vision/audio causes
+    /// `litert_lm_engine_settings_create` to return NULL on iPhone. Pin
+    /// the multimodal channels to `"cpu"` regardless of the requested
+    /// text backend so GPU mode works for text generation.
+    private static let multimodalBackend: String = "cpu"
+
     deinit {
         let eng = engine
         let ses = chatSession
@@ -125,7 +132,7 @@ public final class LiteRTLMEngine: @unchecked Sendable {
                         litert_lm_set_min_log_level(1)
 
                         guard let settings = litert_lm_engine_settings_create(
-                            path, backendStr, backendStr, backendStr
+                            path, backendStr, Self.multimodalBackend, Self.multimodalBackend
                         ) else {
                             throw LiteRTLMError.engineCreationFailed("Failed to create engine settings")
                         }
